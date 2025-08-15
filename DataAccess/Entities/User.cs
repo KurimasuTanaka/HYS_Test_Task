@@ -1,0 +1,37 @@
+using Database;
+using Google.Protobuf.WellKnownTypes;
+using Org.BouncyCastle.Asn1.Cms;
+
+namespace DataAccess;
+
+public class User : UserModel
+{
+    public User(UserModel model)
+    {
+        Id = model.Id;
+        Name = model.Name;
+    }
+
+    public User(string name)
+    {
+        Name = name;
+    }
+
+    public bool IsUserAvailableAtTime(DateTime time)
+    {
+        return Meetings.Any(m => m.StartTime < time && m.EndTime > time);
+    }
+
+    public TimeSpan TimeToEndOfMeeting(DateTime timeOnWhichMeetingIsScheduled)
+    {
+        var meeting = Meetings.FirstOrDefault(m => m.StartTime < timeOnWhichMeetingIsScheduled && m.EndTime > timeOnWhichMeetingIsScheduled);
+
+        if (meeting == null) return TimeSpan.FromSeconds(0);
+        return meeting.EndTime - timeOnWhichMeetingIsScheduled;
+    }
+
+    public bool IsUserAvailableAtTimeSpan(DateTime startTime, DateTime endTime)
+    {
+        return !Meetings.Any(m => m.StartTime < endTime && m.EndTime > startTime);
+    }
+} 
