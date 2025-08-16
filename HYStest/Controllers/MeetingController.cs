@@ -33,9 +33,7 @@ namespace HYStest.Controllers
                 _logger.LogError($"Error scheduling meeting: {ex.Message}");
             }
 
-            return scheduledTimeInfo != null ? Ok(scheduledTimeInfo) : BadRequest("Failed to schedule meeting.")   ;
+            return scheduledTimeInfo != null ? Ok(scheduledTimeInfo) : BadRequest("Failed to schedule meeting.");
         }
-
-
     }
 }

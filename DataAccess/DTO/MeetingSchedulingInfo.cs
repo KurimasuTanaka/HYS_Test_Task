@@ -2,6 +2,7 @@ using System;
 
 namespace DataAccess.DTO;
 
+/// Data transfer object for meeting scheduling requests
 public class MeetingSchedulingInfo
 {
     public List<long> ParticipantIds { get; set; }

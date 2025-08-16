@@ -2,6 +2,7 @@ using Database;
 
 namespace DataAccess;
 
+/// Meeting entity representing a scheduled meeting
 public class Meeting : MeetingModel
 {
     public Meeting(MeetingModel model)
@@ -22,5 +23,4 @@ public class Meeting : MeetingModel
         StartTime = startTime;
         EndTime = endTime;
     }
-
 }

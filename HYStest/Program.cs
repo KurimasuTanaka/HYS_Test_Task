@@ -9,22 +9,16 @@ internal class Program
     {
         var builder = WebApplication.CreateBuilder(args);
         builder.Services.AddSwaggerGen();
-
         builder.Services.AddDbContextFactory<Context>();
-
         builder.Services.AddControllers().AddJsonOptions(options =>
         {
             options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
         });
         builder.Services.AddDataAccess();
-
         builder.Services.AddScoped<IMeetingSchedulerService, MeetingSchedulerService>();
 
-
         var app = builder.Build();
-
         app.MapControllers();
-
         app.UseHttpsRedirection();
         app.MapSwagger();
         app.UseSwaggerUI();

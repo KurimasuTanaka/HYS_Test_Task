@@ -4,6 +4,7 @@ using DataAccess.DTO;
 
 namespace HYStest.Services.MeetingSchedulerService;
 
+/// Service implementation for meeting scheduling operations
 public class MeetingSchedulerService : IMeetingSchedulerService
 {
     private readonly IMeetingRepository _meetingRepository;
@@ -20,10 +21,9 @@ public class MeetingSchedulerService : IMeetingSchedulerService
         _logger = logger;
     }
 
-    
+    /// Schedules a meeting by finding the earliest available time slot for all participants
     public async Task<ScheduledTimeInfo> ScheduleMeeting(MeetingSchedulingInfo schedulingInfo)
     {
-
         _logger.LogInformation($"Scheduling meeting: {schedulingInfo}");
 
         if (schedulingInfo.EarliestStart > schedulingInfo.LatestEnd)
@@ -39,7 +39,6 @@ public class MeetingSchedulerService : IMeetingSchedulerService
         }
 
         List<User> participants = new List<User>();
-
         foreach (long participantId in schedulingInfo.ParticipantIds)
         {
             var user = await _userRepository.GetByIdAsync(participantId);
@@ -64,8 +63,6 @@ public class MeetingSchedulerService : IMeetingSchedulerService
         {
             schedulingInfo.LatestEnd = new DateTime(schedulingInfo.LatestEnd.Year, schedulingInfo.LatestEnd.Month, schedulingInfo.LatestEnd.Day, _workDayEnd.Hour, _workDayEnd.Minute, _workDayEnd.Second);
         }
-
-
 
         DateTime possibleStartTime = schedulingInfo.EarliestStart;
         while (possibleStartTime <= schedulingInfo.LatestEnd)
@@ -104,6 +101,7 @@ public class MeetingSchedulerService : IMeetingSchedulerService
                 possibleStartTime = user.DateTimeOfEndOfMeeting(possibleStartTime);
             }
         }
+        
         throw new InvalidOperationException("Unable to schedule meeting.");
     }
 }
