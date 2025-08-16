@@ -10,6 +10,7 @@ public class User : UserModel
     {
         Id = model.Id;
         Name = model.Name;
+        Meetings = model.Meetings;
     }
 
     public User(string name)
@@ -19,12 +20,12 @@ public class User : UserModel
 
     public bool IsUserAvailableAtTime(DateTime time)
     {
-        return Meetings.Any(m => m.StartTime < time && m.EndTime > time);
+        return !Meetings.Any(m => m.StartTime <= time && m.EndTime > time);
     }
 
     public TimeSpan TimeToEndOfMeeting(DateTime timeOnWhichMeetingIsScheduled)
     {
-        var meeting = Meetings.FirstOrDefault(m => m.StartTime < timeOnWhichMeetingIsScheduled && m.EndTime > timeOnWhichMeetingIsScheduled);
+        var meeting = Meetings.FirstOrDefault(m => m.StartTime <= timeOnWhichMeetingIsScheduled && m.EndTime > timeOnWhichMeetingIsScheduled);
 
         if (meeting == null) return TimeSpan.FromSeconds(0);
         return meeting.EndTime - timeOnWhichMeetingIsScheduled;
@@ -32,6 +33,13 @@ public class User : UserModel
 
     public bool IsUserAvailableAtTimeSpan(DateTime startTime, DateTime endTime)
     {
-        return !Meetings.Any(m => m.StartTime < endTime && m.EndTime > startTime);
+        return !Meetings.Any(m => (m.EndTime > startTime && m.EndTime < endTime) || (m.StartTime > startTime && m.StartTime < endTime));
+    }
+
+    public DateTime TimeToEndOfFirstMeetingAtTimeSpan(DateTime startTime, DateTime endTime)
+    {
+        var meeting = Meetings.FirstOrDefault(m => (m.EndTime > startTime && m.EndTime < endTime) || (m.StartTime > startTime && m.StartTime < endTime));
+        if (meeting == null) return DateTime.MinValue;
+        return meeting.EndTime;
     }
 } 

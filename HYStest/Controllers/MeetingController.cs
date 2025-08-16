@@ -1,4 +1,5 @@
 using DataAccess;
+using DataAccess.DTO;
 using HYStest.Services.MeetingSchedulerService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -15,18 +16,14 @@ namespace HYStest.Controllers
             _meetingSchedulerService = meetingSchedulerService;
         }
 
-        public async Task<IActionResult> ScheduleMeeting(
-            [FromBody] List<long> participantIds,
-            [FromBody] int durationMinutes,
-            [FromBody] DateTime earliestStart,
-            [FromBody] DateTime latestEnd)
+        [HttpPost("meetings")]
+        public async Task<ScheduledTimeInfo> ScheduleMeeting([FromBody] MeetingSchedulingInfo schedulingInfo)
         {
-            Meeting meeting = await _meetingSchedulerService.ScheduleMeeting(participantIds, durationMinutes, earliestStart, latestEnd);
-            if (meeting != null)
-            {
-                return Ok("Meeting created successfully.");
-            }
-            return BadRequest("Failed to create meeting.");
+            var scheduledTime = await _meetingSchedulerService.ScheduleMeeting(schedulingInfo);
+            // if (scheduledTime.StartTime != DateTime.MinValue && scheduledTime.EndTime != DateTime.MinValue)
+            // {
+            // }
+                return scheduledTime;
         }
 
 

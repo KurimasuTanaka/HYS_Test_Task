@@ -17,7 +17,7 @@ public class MeetingRepository : IMeetingRepository
     {
         using (var context = _contextFactory.CreateDbContext())
         {
-            var entity = await context.Meetings.Include(p => p.Participants).FindAsync(id);
+            var entity = await context.Meetings.Include(p => p.Participants).FirstOrDefaultAsync(m => m.Id == id);
             if (entity == null) return null;
             return new Meeting(entity);
         }
@@ -36,9 +36,25 @@ public class MeetingRepository : IMeetingRepository
     {
         using (var context = _contextFactory.CreateDbContext())
         {
+            var participants = new List<UserModel>();
+            var participantIds = new HashSet<long>();
+
+            foreach (var participant in meeting.Participants)
+            {
+                if (participantIds.Add(participant.Id))
+                {
+                    var p = context.Users.FirstOrDefault(u => u.Id == participant.Id);
+                    if (p != null)
+                    {
+                        participants.Add(p);
+                    }
+                }
+            }
+
+            meeting.Participants = participants;
+
             await context.Meetings.AddAsync(meeting);
             await context.SaveChangesAsync();
-
             return null;
         }
     }
@@ -60,14 +76,14 @@ public class MeetingRepository : IMeetingRepository
         }
     }
 
-    public Task<IEnumerable<Meeting>> GetByUserIdAsync(long userId)
+    public async Task<IEnumerable<Meeting>> GetByUserIdAsync(long userId)
     {
         using (var context = _contextFactory.CreateDbContext())
         {
-            return context.Meetings.Include(m => m.Participants)
+            return await context.Meetings.Include(m => m.Participants)
                 .Where(m => m.Participants.Any(user => user.Id == userId))
                 .Select(m => new Meeting(m))
                 .ToListAsync();
         }
     }
-} 
+}

@@ -17,7 +17,7 @@ public class UserRepository : IUserRepository
     {
         using (var context = _contextFactory.CreateDbContext())
         {
-            var entity = await context.Users.Include(u => u.Meetings).FindAsync(id);
+            var entity = await context.Users.Include(u => u.Meetings).FirstOrDefaultAsync(u => u.Id == id);
             if (entity == null) return null;
             return new User(entity);
         }
@@ -39,7 +39,7 @@ public class UserRepository : IUserRepository
             await context.Users.AddAsync(user);
             await context.SaveChangesAsync();
 
-            var entity = await context.Users.FirstOrDefaultAsync(u => u.Name == user.Name);
+            var entity = await context.Users.Include(u => u.Meetings).FirstOrDefaultAsync(u => u.Name == user.Name);
             if (entity == null) return null;
             return new User(entity);
         }

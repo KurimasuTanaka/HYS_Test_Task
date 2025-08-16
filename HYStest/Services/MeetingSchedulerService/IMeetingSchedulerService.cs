@@ -1,14 +1,11 @@
 using System;
 using DataAccess;
+using DataAccess.DTO;
 
 namespace HYStest.Services.MeetingSchedulerService;
 
 public interface IMeetingSchedulerService
 {
-    Task<Meeting> ScheduleMeeting(
-        List<long> participantIds,
-        int durationMinutes,
-        DateTime earliestStart,
-        DateTime latestEnd
+    Task<ScheduledTimeInfo> ScheduleMeeting(MeetingSchedulingInfo schedulingInfo
     );
 }
