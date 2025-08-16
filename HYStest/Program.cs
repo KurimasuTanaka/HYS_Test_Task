@@ -1,3 +1,4 @@
+using System.Text.Json.Serialization;
 using DataAccess;
 using Database;
 using HYStest.Services.MeetingSchedulerService;
@@ -11,8 +12,10 @@ internal class Program
 
         builder.Services.AddDbContextFactory<Context>();
 
-        builder.Services.AddControllers();
-
+        builder.Services.AddControllers().AddJsonOptions(options =>
+        {
+            options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles;
+        });
         builder.Services.AddDataAccess();
 
         builder.Services.AddScoped<IMeetingSchedulerService, MeetingSchedulerService>();
