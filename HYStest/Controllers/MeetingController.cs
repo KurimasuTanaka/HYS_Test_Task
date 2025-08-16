@@ -3,6 +3,7 @@ using DataAccess.DTO;
 using HYStest.Services.MeetingSchedulerService;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Infrastructure;
 
 namespace HYStest.Controllers
 {
@@ -10,20 +11,29 @@ namespace HYStest.Controllers
     public class MeetingController : ControllerBase
     {
         private readonly IMeetingSchedulerService _meetingSchedulerService;
+        private readonly ILogger<MeetingController> _logger;
 
-        public MeetingController(IMeetingSchedulerService meetingSchedulerService)
+        public MeetingController(IMeetingSchedulerService meetingSchedulerService, ILogger<MeetingController> logger)
         {
             _meetingSchedulerService = meetingSchedulerService;
+            _logger = logger;
         }
 
         [HttpPost("meetings")]
-        public async Task<ScheduledTimeInfo> ScheduleMeeting([FromBody] MeetingSchedulingInfo schedulingInfo)
+        public async Task<ActionResult<ScheduledTimeInfo>> ScheduleMeeting([FromBody] MeetingSchedulingInfo schedulingInfo)
         {
-            var scheduledTime = await _meetingSchedulerService.ScheduleMeeting(schedulingInfo);
-            // if (scheduledTime.StartTime != DateTime.MinValue && scheduledTime.EndTime != DateTime.MinValue)
-            // {
-            // }
-                return scheduledTime;
+            ScheduledTimeInfo? scheduledTimeInfo = null;
+
+            try
+            {
+                scheduledTimeInfo = await _meetingSchedulerService.ScheduleMeeting(schedulingInfo);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError($"Error scheduling meeting: {ex.Message}");
+            }
+
+            return scheduledTimeInfo != null ? Ok(scheduledTimeInfo) : BadRequest("Failed to schedule meeting.")   ;
         }
 
 

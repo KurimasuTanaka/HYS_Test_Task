@@ -3,6 +3,7 @@ using DataAccess.DTO;
 
 namespace Tests;
 
+[CollectionDefinition(DisableParallelization = true)]
 public class MeetingsServicesTests : TestBase
 {
 
