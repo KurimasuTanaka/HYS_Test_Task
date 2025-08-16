@@ -1,4 +1,4 @@
-# Test project by Vedmitskyi Stanislav for HYS Enterprise Internship #
+# Test project by Vedmitskyi Stanislav for HYS Enterprise Back-end Course #
 Sorry for the delay — I only found the email in my spam folder yesterday. Is there still a chance that my test project will be reviewed?
 
 ## Runnig instructions: ##
