@@ -9,6 +9,9 @@ public class MeetingSchedulerService : IMeetingSchedulerService
     private readonly IMeetingRepository _meetingRepository;
     private readonly IUserRepository _userRepository;
 
+    private const int _workDayStart = 9;
+    private const int _workDayEnd = 17;
+
     public MeetingSchedulerService(IMeetingRepository meetingRepository, IUserRepository userRepository)
     {
         _meetingRepository = meetingRepository;
@@ -37,6 +40,11 @@ public class MeetingSchedulerService : IMeetingSchedulerService
         DateTime possibleStartTime = schedulingInfo.EarliestStart;
         while (possibleStartTime <= schedulingInfo.LatestEnd)
         {
+            if(possibleStartTime.Hour < _workDayStart || possibleStartTime.Hour >= _workDayEnd)
+            {
+                possibleStartTime = new DateTime(possibleStartTime.Year, possibleStartTime.Month, possibleStartTime.Day + 1, _workDayStart, 0, 0);
+            }
+
             //Check if all users are available at possible start time 
             if (participants.All(user => user.IsUserAvailableAtTime(possibleStartTime)))
             {
@@ -61,7 +69,7 @@ public class MeetingSchedulerService : IMeetingSchedulerService
                 //If any user is not available, wait until the user will be and repeat first step
                 User user = participants.First(u => !u.IsUserAvailableAtTime(possibleStartTime));
 
-                possibleStartTime += user.TimeToEndOfMeeting(possibleStartTime);
+                possibleStartTime = user.DateTimeOfEndOfMeeting(possibleStartTime);
             }
         }
         throw new InvalidOperationException("Unable to schedule meeting.");    }

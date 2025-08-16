@@ -63,10 +63,10 @@ public class UserTests
         User user = new User("Alice");
         user.Meetings.Add(new Meeting(new List<User> { new User("Alice") }, new DateTime(2023, 10, 1, 9, 0, 0), new DateTime(2023, 10, 1, 12, 0, 0)));
         //Act
-        TimeSpan timeLeft = user.TimeToEndOfMeeting(new DateTime(2023, 10, 1, 11, 0, 0));
+        DateTime timeLeft = user.DateTimeOfEndOfMeeting(new DateTime(2023, 10, 1, 11, 0, 0));
 
         //Assert
-        Assert.True(timeLeft.TotalMinutes == 60);
+        Assert.True(timeLeft == new DateTime(2023, 10, 1, 12, 0, 0));
     }
 
     [Fact]

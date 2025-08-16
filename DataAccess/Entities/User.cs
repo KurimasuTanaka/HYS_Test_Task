@@ -23,12 +23,12 @@ public class User : UserModel
         return !Meetings.Any(m => m.StartTime <= time && m.EndTime > time);
     }
 
-    public TimeSpan TimeToEndOfMeeting(DateTime timeOnWhichMeetingIsScheduled)
+    public DateTime DateTimeOfEndOfMeeting(DateTime timeOnWhichMeetingIsScheduled)
     {
         var meeting = Meetings.FirstOrDefault(m => m.StartTime <= timeOnWhichMeetingIsScheduled && m.EndTime > timeOnWhichMeetingIsScheduled);
 
-        if (meeting == null) return TimeSpan.FromSeconds(0);
-        return meeting.EndTime - timeOnWhichMeetingIsScheduled;
+        if (meeting == null) return DateTime.MinValue;
+        return meeting.EndTime;
     }
 
     public bool IsUserAvailableAtTimeSpan(DateTime startTime, DateTime endTime)
